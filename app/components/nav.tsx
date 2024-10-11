@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LogoutButton from "./logout_button";
 
 const navItems = {
   "/": {
@@ -29,6 +30,9 @@ export function Navbar() {
                 </Link>
               );
             })}
+          </div>
+          <div className="flex flex-row space-x-0 pr-10">
+            <LogoutButton />
           </div>
         </nav>
       </div>

@@ -7,6 +7,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "./components/footer";
 import { baseUrl } from "./sitemap";
+import AuthChecker from "./components/auth-checker";
+import { Provider } from "jotai";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -54,11 +56,15 @@ export default function RootLayout({
     >
       <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
         <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
-          <Navbar />
-          {children}
-          <Footer />
-          <Analytics />
-          <SpeedInsights />
+          <Provider>
+            <AuthChecker>
+              <Navbar />
+              {children}
+              <Footer />
+              <Analytics />
+              <SpeedInsights />
+            </AuthChecker>
+          </Provider>
         </main>
       </body>
     </html>
