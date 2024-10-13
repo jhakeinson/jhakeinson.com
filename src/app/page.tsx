@@ -1,4 +1,4 @@
-import { BlogPosts } from "app/components/posts";
+import { BlogPosts } from "@/components/posts";
 import { getTokens } from "next-firebase-auth-edge";
 import { cookies } from "next/headers";
 import { firebaseClientConfig, firebaseServerConfig } from "@/config";
