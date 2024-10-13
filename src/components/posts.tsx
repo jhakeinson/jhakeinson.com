@@ -3,7 +3,7 @@ import { formatDate } from "@/app/blog/utils";
 import { getBlogs } from "@/lib/actions";
 
 export async function BlogPosts() {
-  let allBlogs = await getBlogs();
+  const allBlogs = await getBlogs();
 
   return (
     <div>

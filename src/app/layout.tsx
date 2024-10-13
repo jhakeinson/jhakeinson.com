@@ -9,6 +9,7 @@ import Footer from "@/components/footer";
 import { baseUrl } from "./sitemap";
 import AuthChecker from "@/components/auth-checker";
 import { Provider } from "jotai";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -54,18 +55,25 @@ export default function RootLayout({
         GeistMono.variable,
       )}
     >
-      <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
-          <Provider>
-            <AuthChecker>
-              <Navbar />
-              {children}
-              <Footer />
-              <Analytics />
-              <SpeedInsights />
-            </AuthChecker>
-          </Provider>
-        </main>
+      <body className="antialiased  lg:mx-auto">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main className="flex-auto max-w-xl mx-auto min-w-0 flex flex-col px-2 md:px-0">
+            <Provider>
+              <AuthChecker>
+                <Navbar />
+                {children}
+                <Footer />
+                <Analytics />
+                <SpeedInsights />
+              </AuthChecker>
+            </Provider>
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );
