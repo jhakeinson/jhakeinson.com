@@ -1,3 +1,4 @@
+import { BlogEditorDialog } from "@/components/blog-editor-dialog";
 import { BlogPosts } from "@/components/posts";
 
 export const metadata = {
@@ -8,6 +9,7 @@ export const metadata = {
 export default function Page() {
   return (
     <section>
+      <BlogEditorDialog />
       <h1 className="font-semibold text-2xl mb-8 tracking-tighter">My Blog</h1>
       <BlogPosts />
     </section>

@@ -55,7 +55,7 @@ export default function RootLayout({
         GeistMono.variable,
       )}
     >
-      <body className="antialiased  lg:mx-auto">
+      <body className="antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

@@ -1,62 +1,57 @@
 import { notFound } from "next/navigation";
 import { CustomMDX } from "@/components/mdx";
-import { formatDate, getBlogPosts } from "app/blog/utils";
-import { baseUrl } from "app/sitemap";
+import { formatDate, getBlogPosts } from "@/app/blog/utils";
+import { baseUrl } from "@/app/sitemap";
+import { getBlogBySlug } from "@/lib/actions";
 
-export async function generateStaticParams() {
-  const posts = getBlogPosts();
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
-export function generateMetadata({ params }) {
-  const post = getBlogPosts().find((post) => post.slug === params.slug);
+export async function generateMetadata({ params }) {
+  const post = await getBlogBySlug(params.slug);
   if (!post) {
     return {};
   }
 
   const {
     title,
-    publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = post.metadata;
-  const ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
+    createdAt,
+    // summary: description,
+    // image,
+  } = post;
+  // const ogImage = image
+  //   ? image
+  //   : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
 
   return {
     title,
-    description,
+    description: "A nice blog.",
     openGraph: {
       title,
-      description,
+      description: "Blog post",
       type: "article",
-      publishedTime,
+      publishedTime: createdAt.toLocaleDateString("en-US"),
       url: `${baseUrl}/blog/${post.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
+      // images: [
+      //   {
+      //     url: ogImage,
+      //   },
+      // ],
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description,
-      images: [ogImage],
+      description: "Blog post",
+      // images: [ogImage],
     },
   };
 }
 
-export default function Blog({ params }) {
-  const post = getBlogPosts().find((post) => post.slug === params.slug);
+export default async function Blog({ params }) {
+  const post = await getBlogBySlug(params.slug);
 
   if (!post) {
     notFound();
   }
+
+  console.log("md: ", post.content.replace("\\n", "\n"));
 
   return (
     <section>
@@ -67,31 +62,31 @@ export default function Blog({ params }) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BlogPosting",
-            headline: post.metadata.title,
-            datePublished: post.metadata.publishedAt,
-            dateModified: post.metadata.publishedAt,
-            description: post.metadata.summary,
-            image: post.metadata.image
-              ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
+            headline: post.title,
+            datePublished: post.createdAt.toLocaleString("en-US"),
+            dateModified: post.createdAt.toLocaleString("en-US"),
+            description: "Blog post",
+            // image: post.metadata.image
+            //   ? `${baseUrl}${post.metadata.image}`
+            //   : `/og?title=${encodeURIComponent(post.metadata.title)}`,
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               "@type": "Person",
-              name: "My Portfolio",
+              name: "Jhake Inson",
             },
           }),
         }}
       />
       <h1 className="title font-semibold text-2xl tracking-tighter">
-        {post.metadata.title}
+        {post.title}
       </h1>
       <div className="flex justify-between items-center mt-2 mb-8 text-sm">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(post.metadata.publishedAt)}
+          {formatDate(post.createdAt)}
         </p>
       </div>
       <article className="prose">
-        <CustomMDX source={post.content} />
+        <CustomMDX source={post.content?.replace("\\n", "\n")} />
       </article>
     </section>
   );
