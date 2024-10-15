@@ -15,7 +15,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CirclePlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { createBlog } from "@/lib/actions";
 
 export function BlogEditorDialog() {
   const [markdown, setMarkdown] = useState(
@@ -23,6 +25,7 @@ export function BlogEditorDialog() {
   );
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [open, setOpen] = useState(false);
 
   const onTitleChangw = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -31,10 +34,31 @@ export function BlogEditorDialog() {
     setSlug(_.kebabCase(e.target.value));
   };
 
+  const submit = async () => {
+    try {
+      const res = await createBlog({
+        title,
+        slug,
+        content: markdown,
+      });
+
+      console.log(res);
+    } catch (errori: unknown) {
+      console.error("error", errori);
+    }
+
+    closeEditor();
+  };
+
+  const openEditor = () => setOpen(true);
+  const closeEditor = () => setOpen(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Create Blog</Button>
+        <Button className="border-0" variant="link">
+          <CirclePlus />
+        </Button>
       </DialogTrigger>
       <DialogContent className=" w-10/12 max-w-[100vw] ">
         <DialogHeader>
@@ -77,7 +101,7 @@ export function BlogEditorDialog() {
           </Card>
         </div>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button onClick={submit}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
