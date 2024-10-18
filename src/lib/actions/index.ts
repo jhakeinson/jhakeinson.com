@@ -4,10 +4,10 @@ import { eq } from "drizzle-orm";
 import { db } from "../drizzle";
 import { blog } from "../drizzle/schema";
 import { getUserTokens } from "../firebase/utils";
-import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
 type BlogInsertType = typeof blog.$inferInsert & { authorId?: string | null };
+type BlogUpdateType = Partial<typeof blog.$inferInsert>;
 
 export async function testAction() {
   const tokens = await getUserTokens();
@@ -42,6 +42,46 @@ export async function createBlog(newBlog: BlogInsertType) {
       content: newBlog.content,
       published: newBlog.published,
     });
+
+    revalidatePath("/blog");
+
+    return result.rowCount;
+  } catch (error: unknown) {
+    throw error;
+  }
+}
+
+export async function updateBlog(slug: string, newBlog: BlogUpdateType) {
+  try {
+    const tokens = await getUserTokens();
+
+    if (!tokens) {
+      throw new Error("unauthorize");
+    }
+
+    const result = await db
+      .update(blog)
+      .set(newBlog)
+      .where(eq(blog.slug, slug));
+
+    revalidatePath(slug);
+    revalidatePath("/blog");
+
+    return result.rowCount;
+  } catch (error: unknown) {
+    throw error;
+  }
+}
+
+export async function deleteBlog(slug: string) {
+  try {
+    const tokens = await getUserTokens();
+
+    if (!tokens) {
+      throw new Error("unauthorize");
+    }
+
+    const result = await db.delete(blog).where(eq(blog.slug, slug));
 
     revalidatePath("/blog");
 

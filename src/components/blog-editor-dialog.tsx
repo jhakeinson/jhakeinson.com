@@ -1,6 +1,6 @@
 "use client";
 import _ from "lodash";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,17 +15,35 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { createBlog } from "@/lib/actions";
+import { createBlog, getBlogBySlug, updateBlog } from "@/lib/actions";
 
-export function BlogEditorDialog() {
-  const [markdown, setMarkdown] = useState(
-    "# Welcome to Markdown Editor\n\nStart typing your markdown here!",
-  );
+type BlogEditorDialogProps = {
+  postSlug?: string;
+};
+
+export function BlogEditorDialog({ postSlug }: BlogEditorDialogProps) {
+  const [markdown, setMarkdown] = useState("");
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (postSlug && open) {
+        const post = await getBlogBySlug(postSlug);
+
+        if (post) {
+          setMarkdown(post.content || "");
+          setTitle(post.title);
+          setSlug(_.kebabCase(post.title));
+        }
+      }
+    };
+
+    fetchPost();
+  }, [open, postSlug]);
 
   const onTitleChangw = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -36,11 +54,18 @@ export function BlogEditorDialog() {
 
   const submit = async () => {
     try {
-      const res = await createBlog({
+      const formData = {
         title,
         slug,
         content: markdown,
-      });
+      };
+
+      let res: number | null;
+      if (!postSlug) {
+        res = await createBlog(formData);
+      } else {
+        res = await updateBlog(postSlug, formData);
+      }
 
       console.log(res);
     } catch (errori: unknown) {
@@ -50,14 +75,13 @@ export function BlogEditorDialog() {
     closeEditor();
   };
 
-  const openEditor = () => setOpen(true);
   const closeEditor = () => setOpen(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="border-0" variant="link">
-          <CirclePlus />
+        <Button variant="ghost">
+          {postSlug ? <Pencil /> : <CirclePlus />}
         </Button>
       </DialogTrigger>
       <DialogContent className=" w-10/12 max-w-[100vw] ">
