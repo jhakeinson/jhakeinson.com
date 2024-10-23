@@ -1,19 +1,10 @@
-import Link from "next/link";
 import { formatDate } from "@/app/blog/utils";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { getBlogs } from "@/lib/actions";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Blog from "@/app/blog/[slug]/page";
-import { BlogEditorDialog } from "./blog-editor-dialog";
-import { Trash2 } from "lucide-react";
-import { Button } from "./ui/button";
 import { getUserTokens } from "@/lib/firebase/utils";
+import Link from "next/link";
+import { BlogEditorDialog } from "./blog-editor-dialog";
+import DeletePost from "./delete-post";
 
 export async function BlogPosts() {
   const allBlogs = await getBlogs();
@@ -36,9 +27,7 @@ export async function BlogPosts() {
                 {!tokens ? null : (
                   <div className="flex flex-row gap-1">
                     <BlogEditorDialog postSlug={post.slug} />
-                    <Button variant="ghost" size="sm">
-                      <Trash2 />
-                    </Button>
+                    <DeletePost postSlug={post.slug} />
                   </div>
                 )}
               </div>
