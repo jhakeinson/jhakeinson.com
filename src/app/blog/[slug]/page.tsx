@@ -4,6 +4,9 @@ import { formatDate, getBlogPosts } from "@/app/blog/utils";
 import { baseUrl } from "@/app/sitemap";
 import { getBlogBySlug } from "@/lib/actions";
 
+export const dynamic = "force-dynamic";
+// export const dynamicParams = false;
+
 export async function generateMetadata({ params }) {
   const post = await getBlogBySlug(params.slug);
   if (!post) {
@@ -50,8 +53,6 @@ export default async function Blog({ params }) {
   if (!post) {
     notFound();
   }
-
-  console.log("md: ", post.content.replace("\\n", "\n"));
 
   return (
     <section>

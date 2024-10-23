@@ -23,6 +23,7 @@ export async function getBlogs() {
 
 export async function getBlogBySlug(slug: string) {
   const data = await db.select().from(blog).where(eq(blog.slug, slug));
+  revalidatePath(`/blog/${slug}`);
 
   return data.length === 0 ? null : data[0];
 }
@@ -64,7 +65,7 @@ export async function updateBlog(slug: string, newBlog: BlogUpdateType) {
       .set(newBlog)
       .where(eq(blog.slug, slug));
 
-    revalidatePath(slug);
+    revalidatePath(`/blog/${slug}`);
     revalidatePath("/blog");
 
     return result.rowCount;
