@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "../drizzle";
 import { blog } from "../drizzle/schema";
 import { getUserTokens } from "../firebase/utils";
@@ -16,7 +16,7 @@ export async function testAction() {
 }
 
 export async function getBlogs() {
-  const data = await db.select().from(blog);
+  const data = await db.select().from(blog).orderBy(desc(blog.createdAt));
 
   return data;
 }
