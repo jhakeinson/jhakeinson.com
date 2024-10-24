@@ -3,6 +3,8 @@ import { CustomMDX } from "@/components/mdx";
 import { formatDate, getBlogPosts } from "@/app/blog/utils";
 import { baseUrl } from "@/app/sitemap";
 import { getBlogBySlug } from "@/lib/actions";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const dynamic = "force-dynamic";
 // export const dynamicParams = false;
@@ -87,7 +89,9 @@ export default async function Blog({ params }) {
         </p>
       </div>
       <article className="prose">
-        <CustomMDX source={post.content?.replace("\\n", "\n")} />
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {post.content}
+        </ReactMarkdown>
       </article>
     </section>
   );
