@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { CustomMDX } from "@/components/mdx";
-import { formatDate, getBlogPosts } from "@/app/blog/utils";
+import { formatDate } from "@/app/blog/utils";
 import { baseUrl } from "@/app/sitemap";
 import { getBlogBySlug } from "@/lib/actions";
 import ReactMarkdown from "react-markdown";

@@ -6,7 +6,7 @@ import { app } from "@/lib/firebase";
 import { useAtom } from "jotai";
 import { userAtom } from "@/lib/stores/store";
 import { Button } from "./ui/button";
-import { LogOut, LogOutIcon } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export default function LogoutButton() {
   const router = useRouter();
